@@ -1,6 +1,6 @@
 {{define "invalid-feedback"}}
 <div class="invalid-feedback">
-  {{ range $message := . }}
+  {{ range $message := .Errors }}
   <p>{{ $message }}</p>
   {{ end }}
 </div>

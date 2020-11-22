@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"goblog/app/http/requests"
 	"goblog/app/models/article"
+	"goblog/pkg/auth"
 	"goblog/pkg/logger"
 	"goblog/pkg/route"
 	"goblog/pkg/view"
@@ -39,7 +40,7 @@ func (*ArticlesController) Show(w http.ResponseWriter, r *http.Request) {
 		// ---  4. 读取成功，显示文章 ---
 		view.Render(w, view.D{
 			"Article": article,
-		}, "articles.show")
+		}, "articles.show", "articles._article_meta")
 	}
 }
 
@@ -57,7 +58,7 @@ func (*ArticlesController) Index(w http.ResponseWriter, r *http.Request) {
 		// ---  2. 加载模板 ---
 		view.Render(w, view.D{
 			"Articles": articles,
-		}, "articles.index")
+		}, "articles.index", "articles._article_meta")
 	}
 }
 
@@ -69,9 +70,11 @@ func (*ArticlesController) Create(w http.ResponseWriter, r *http.Request) {
 // Store 文章创建页面
 func (*ArticlesController) Store(w http.ResponseWriter, r *http.Request) {
 	// 1. 初始化数据
+	currentUser := auth.User()
 	_article := article.Article{
-		Title: r.PostFormValue("title"),
-		Body:  r.PostFormValue("body"),
+		Title:  r.PostFormValue("title"),
+		Body:   r.PostFormValue("body"),
+		UserID: currentUser.ID,
 	}
 
 	// 2. 表单验证

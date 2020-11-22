@@ -38,7 +38,8 @@ func ConnectDB() *gorm.DB {
 	var level gormlogger.LogLevel
 	if config.GetBool("app.debug") {
 		// 读取不到数据也会显示
-		level = gormlogger.Warn
+		// level = gormlogger.Warn
+		level = gormlogger.Info
 	} else {
 		// 只有错误才会显示
 		level = gormlogger.Error

@@ -1,14 +1,22 @@
 package controllers
 
 import (
-	"database/sql"
 	"fmt"
+	"goblog/app/models/article"
 	"goblog/pkg/logger"
 	"goblog/pkg/route"
 	"goblog/pkg/types"
 	"html/template"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
+
+func getRouteVariable(parameterName string, r *http.Request) string {
+	vars := mux.Vars(r)
+	return vars[parameterName]
+}
 
 // ArticlesController 文章相关页面
 type ArticlesController struct{}
@@ -19,11 +27,11 @@ func (*ArticlesController) Show(w http.ResponseWriter, r *http.Request) {
 	id := getRouteVariable("id", r)
 
 	// 2. 读取对应的文章数据
-	article, err := getArticleByID(id)
+	article, err := article.Get(id)
 
 	// 3. 如果出现错误
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == gorm.ErrRecordNotFound {
 			// 3.1 数据未找到
 			w.WriteHeader(http.StatusNotFound)
 			fmt.Fprint(w, "404 文章未找到")
@@ -45,11 +53,4 @@ func (*ArticlesController) Show(w http.ResponseWriter, r *http.Request) {
 
 		tmpl.Execute(w, article)
 	}
-}
-
-func getArticleByID(id string) (Article, error) {
-	article := Article{}
-	query := "SELECT * FROM articles WHERE id = ?"
-	err := db.QueryRow(query, id).Scan(&article.ID, &article.Title, &article.Body)
-	return article, err
 }

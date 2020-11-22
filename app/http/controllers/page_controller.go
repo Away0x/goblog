@@ -16,7 +16,7 @@ func (*PagesController) Home(w http.ResponseWriter, r *http.Request) {
 // About 关于我们页面
 func (*PagesController) About(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "此博客是用以记录编程笔记，如您有反馈或建议，请联系 "+
-		"<a href=\"mailto:summer@example.com\">summer@example.com</a>")
+		"<a href=\"mailto:away0x@example.com\">away0x@example.com</a>")
 }
 
 // NotFound 404 页面

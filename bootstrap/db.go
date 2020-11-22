@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"goblog/app/models/article"
+	"goblog/app/models/user"
 	"goblog/pkg/model"
 	"time"
 
@@ -31,6 +32,7 @@ func SetupDB() {
 func migration(db *gorm.DB) {
 	// 自动迁移
 	db.AutoMigrate(
+		&user.User{},
 		&article.Article{},
 	)
 }

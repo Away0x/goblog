@@ -5,6 +5,7 @@ import (
 	"goblog/app/http/requests"
 	"goblog/app/models/article"
 	"goblog/app/models/category"
+	"goblog/pkg/flash"
 	"goblog/pkg/route"
 	"goblog/pkg/view"
 	"net/http"
@@ -35,9 +36,8 @@ func (*CategoriesController) Store(w http.ResponseWriter, r *http.Request) {
 		// 创建文章分类
 		_category.Create()
 		if _category.ID > 0 {
-			fmt.Fprint(w, "创建成功！")
-			// indexURL := route.Name2URL("categories.show", "id", _category.GetStringID())
-			// http.Redirect(w, r, indexURL, http.StatusFound)
+			flash.Success("分类创建成功!")
+			http.Redirect(w, r, "/", http.StatusFound)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprint(w, "创建文章分类失败，请联系管理员")

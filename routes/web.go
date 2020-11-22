@@ -13,6 +13,7 @@ func RegisterWebRoutes(r *mux.Router) {
 	// 静态页面
 	pc := new(controllers.PagesController)
 	r.NotFoundHandler = http.HandlerFunc(pc.NotFound)
+	r.MethodNotAllowedHandler = http.HandlerFunc(pc.NotFound)
 	r.HandleFunc("/about", pc.About).Methods("GET").Name("about")
 
 	// 文章相关页面
@@ -36,6 +37,11 @@ func RegisterWebRoutes(r *mux.Router) {
 	// 用户信息
 	uc := new(controllers.UserController)
 	r.HandleFunc("/users/{id:[0-9]+}", uc.Show).Methods("GET").Name("users.show")
+
+	// 文章分类
+	cc := new(controllers.CategoriesController)
+	r.HandleFunc("/categories/create", middlewares.Auth(cc.Create)).Methods("GET").Name("categories.create")
+	r.HandleFunc("/categories", middlewares.Auth(cc.Store)).Methods("POST").Name("categories.store")
 
 	// 静态资源
 	r.PathPrefix("/css/").Handler(http.FileServer(http.Dir("./public")))

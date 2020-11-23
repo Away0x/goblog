@@ -16,6 +16,21 @@
 </div>
 
 <div class="form-group mt-3">
+  <label for="category">分类</label>
+  <select class="form-control {{if .Errors.category }}is-invalid {{ end }}" name="category">
+    {{ $categoryId := .Article.CategoryID }}
+    {{ range $key, $cat := .Categories }}
+      <option value="{{ $cat.ID }}" {{ if eq $cat.ID $categoryId }} selected {{ end }}>{{ $cat.Name }}</option>
+    {{ end }}
+  </select>
+  {{ with.Errors.category }}
+  <div class="invalid-feedback">
+    {{ . }}
+  </div>
+  {{ end }}
+</div>
+
+<div class="form-group mt-3">
   <label for="body">内容</label>
   <textarea
     name="body"

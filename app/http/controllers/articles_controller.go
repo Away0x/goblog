@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"goblog/app/http/requests"
 	"goblog/app/models/article"
+	"goblog/app/models/category"
 	"goblog/app/policies"
 	"goblog/pkg/auth"
 	"goblog/pkg/route"
 	"goblog/pkg/view"
 	"net/http"
+	"strconv"
 )
 
 // ArticlesController 文章相关页面
@@ -59,12 +61,15 @@ func (*ArticlesController) Create(w http.ResponseWriter, r *http.Request) {
 
 // Store 文章创建页面
 func (*ArticlesController) Store(w http.ResponseWriter, r *http.Request) {
+	categoryID, _ := strconv.Atoi(r.PostFormValue("category"))
+
 	// 1. 初始化数据
 	currentUser := auth.User()
 	_article := article.Article{
-		Title:  r.PostFormValue("title"),
-		Body:   r.PostFormValue("body"),
-		UserID: currentUser.ID,
+		Title:      r.PostFormValue("title"),
+		Body:       r.PostFormValue("body"),
+		CategoryID: uint64(categoryID),
+		UserID:     currentUser.ID,
 	}
 
 	// 2. 表单验证
@@ -131,9 +136,15 @@ func (ac *ArticlesController) Update(w http.ResponseWriter, r *http.Request) {
 		if !policies.CanModifyArticle(_article) {
 			ac.ResposeForUnauthorized(w, r)
 		} else {
+			categoryID, _ := strconv.Atoi(r.PostFormValue("category"))
+
 			// 4.1 表单验证
 			_article.Title = r.PostFormValue("title")
 			_article.Body = r.PostFormValue("body")
+
+			newCategory := category.Category{}
+			newCategory.ID = uint64(categoryID)
+			_article.Category = newCategory
 
 			errors := requests.ValidateArticleForm(_article)
 
